@@ -1,0 +1,163 @@
+@use 'sass:map';
+
+@use 'mixins/mixins' as *;
+@use 'mixins/utils' as *;
+@use 'mixins/var' as *;
+@use 'common/var' as *;
+
+$form-line-height: () !default;
+$form-line-height: map.merge(
+  (
+    'large': 36px,
+    'default': 32px,
+    'small': 28px,
+  ),
+  $form-line-height
+);
+
+@include b(form) {
+  @include set-component-css-var('form', $form);
+
+  @include m(label-left) {
+    & .#{$namespace}-form-item__label {
+      text-align: left;
+    }
+  }
+  @include m(label-top) {
+    & .#{$namespace}-form-item {
+      display: block;
+    }
+    & .#{$namespace}-form-item__label {
+      display: block;
+      text-align: left;
+      padding: 0 0 10px 0;
+    }
+  }
+  @include m(inline) {
+    & .#{$namespace}-form-item {
+      display: inline-flex;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+
+    &.#{$namespace}-form--label-top {
+      display: flex;
+      flex-wrap: wrap;
+
+      .#{$namespace}-form-item {
+        display: block;
+      }
+    }
+  }
+}
+
+@include b(form-item) {
+  display: flex;
+  margin-bottom: 22px;
+
+  & .#{$namespace}-form-item {
+    margin-bottom: 0;
+  }
+
+  & .#{$namespace}-input__validateIcon {
+    display: none;
+  }
+
+  @each $size in (large, default, small) {
+    @include m($size) {
+      .#{$namespace}-form-item__label,
+      .#{$namespace}-form-item__content {
+        font-size: map.get($input-font-size, $size);
+        line-height: map.get($form-line-height, $size);
+      }
+      &.#{$namespace}-form-item {
+        margin-bottom: 18px;
+      }
+      .#{$namespace}-form-item__error {
+        padding-top: 2px;
+      }
+    }
+  }
+
+  @include e(label-wrap) {
+    .#{$namespace}-form-item__label {
+      display: inline-block;
+    }
+  }
+
+  @include e(label) {
+    flex: 0 0 auto;
+    text-align: right;
+    font-size: var(--el-form-label-font-size);
+    color: var(--el-text-color-regular);
+    line-height: map.get($form-line-height, 'default');
+    padding: 0 12px 0 0;
+    box-sizing: border-box;
+  }
+  @include e(content) {
+    flex: 1;
+    line-height: map.get($form-line-height, 'default');
+    position: relative;
+    font-size: 14px;
+    min-width: 0;
+
+    .#{$namespace}-input-group {
+      vertical-align: top;
+    }
+  }
+  @include e(error) {
+    color: var(--el-color-danger);
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 4px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+
+    @include m(inline) {
+      position: relative;
+      top: auto;
+      left: auto;
+      display: inline-block;
+      margin-left: 10px;
+    }
+  }
+
+  @include when(required) {
+    @include pseudo('not(.is-no-asterisk)') {
+      & > .#{$namespace}-form-item__label:before,
+      &
+        > .#{$namespace}-form-item__label-wrap
+        > .#{$namespace}-form-item__label:before {
+        content: '*';
+        color: var(--el-color-danger);
+        margin-right: 4px;
+      }
+    }
+  }
+
+  @include when(error) {
+    & .#{$namespace}-input__inner,
+    & .#{$namespace}-textarea__inner {
+      &,
+      &:focus {
+        border-color: var(--el-color-danger);
+      }
+    }
+    & .#{$namespace}-input-group__append,
+    & .#{$namespace}-input-group__prepend {
+      & .#{$namespace}-input__inner {
+        border-color: transparent;
+      }
+    }
+    .#{$namespace}-input__validateIcon {
+      color: var(--el-color-danger);
+    }
+  }
+
+  @include m(feedback) {
+    .#{$namespace}-input__validateIcon {
+      display: inline-flex;
+    }
+  }
+}
